@@ -99,13 +99,14 @@ RUN apt-get update && apt install -y procps
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
-# Crear el directorio antes de mover el archivo
-RUN mkdir -p /var/www/html/vendor/bin/ \
+# Descargar y mover RoadRunner al path correcto
+RUN mkdir -p /usr/bin/ \
     && curl -L -o rr.tar.gz https://github.com/roadrunner-server/roadrunner/releases/download/v2024.1.1/roadrunner-2024.1.1-linux-arm64.tar.gz \
     && tar -xvzf rr.tar.gz \
-    && mv roadrunner-2024.1.1-linux-arm64/rr /var/www/html/vendor/bin/rr \
-    && chmod +x /var/www/html/vendor/bin/rr \
+    && mv roadrunner-2024.1.1-linux-arm64/rr /usr/bin/rr \
+    && chmod +x /usr/bin/rr \
     && rm -rf roadrunner-2024.1.1-linux-arm64 rr.tar.gz
+
 
 
 RUN apt-get install -y nano
