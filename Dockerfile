@@ -26,7 +26,8 @@ RUN php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServic
 RUN php artisan jwt:secret
 
 # Instalamos Octane y RoadRunner
-RUN composer require laravel/octane spiral/roadrunner --with-all-dependencies
+RUN composer require laravel/octane:^1.0 spiral/roadrunner --with-all-dependencies
+
 RUN composer clear-cache
 RUN composer install --no-scripts --no-autoloader
 RUN composer require laravel/octane:^1.0 spiral
