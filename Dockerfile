@@ -68,6 +68,10 @@ RUN mkdir -p /app/storage/logs
 # Publicar la configuración de CORS
 #RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
 
+# Agregar pcntl para manejar señales correctamente
+RUN docker-php-ext-install pcntl
+
+
 # Limpiar la cache de la aplicación
 RUN php artisan cache:clear
 RUN php artisan view:clear
