@@ -7,6 +7,8 @@ WORKDIR /app
 # Instalamos git y otras dependencias necesarias
 RUN apt-get update && apt-get install -y \
     git \
+    libssl-dev \
+    libpcre3-dev \
     unzip \
     libzip-dev \
     && docker-php-ext-install sockets zip \
@@ -17,13 +19,12 @@ RUN apt-get update && apt-get install -y \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.idekey=VSCODE" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    && echo "xdebug.idekey=VSCODE" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini 
 
-
-  
-    
-
-
+    # Instala Swoole
+RUN pecl install swoole \
+&& docker-php-ext-enable swoole
+   
 
 # Instalamos Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -84,7 +85,7 @@ RUN php artisan octane:install --server="swoole"
 COPY supervisord.conf /etc/supervisord.conf
 
 # Exponemos el puerto 8000
-EXPOSE 8010
+EXPOSE 8000
 
 # Instalamos supervisord
 RUN apt-get update && apt-get install -y supervisor bash
@@ -106,7 +107,6 @@ RUN mkdir -p /var/www/html/vendor/bin/ \
 
 
 RUN apt-get install -y nano
-
 
 # Configuramos el CMD para iniciar supervisord
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
