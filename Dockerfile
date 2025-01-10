@@ -1,5 +1,5 @@
 # Usamos una imagen oficial de PHP compatible con ARM
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm-alpine
 
 
 # Instalamos dependencias necesarias
