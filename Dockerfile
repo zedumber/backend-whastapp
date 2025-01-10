@@ -45,7 +45,7 @@ RUN php artisan config:clear
 RUN php artisan octane:install --server="swoole"
 
 # Exponemos el puerto 8000
-EXPOSE 8000
+EXPOSE 8001
 
 # Configuramos supervisord (si usas supervisor para administrar procesos)
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
