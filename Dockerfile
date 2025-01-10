@@ -85,6 +85,9 @@ EXPOSE 8010
 # Instalamos supervisord
 RUN apt-get update && apt-get install -y supervisor bash
 
+RUN apt-get update && apt install -y procps
+
+
 # Copiamos el archivo de configuración de supervisord
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
