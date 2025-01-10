@@ -4,24 +4,30 @@ FROM php:8.2-fpm-bullseye
 # Establecemos el directorio de trabajo
 WORKDIR /app
 
-RUN pecl install swoole \
-    && docker-php-ext-enable swoole
-
-# Instalamos git y otras dependencias necesarias
+# Instalamos dependencias necesarias
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
-    && docker-php-ext-install sockets zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && pecl install xdebug \
+    libbrotli-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    pkg-config \
+    && docker-php-ext-install sockets zip pcntl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instalamos Swoole
+RUN pecl install swoole \
+    && docker-php-ext-enable swoole
+
+# Instalamos xDebug para depuración
+RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.idekey=VSCODE" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-    
 
 
 
