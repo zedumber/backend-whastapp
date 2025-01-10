@@ -18,7 +18,8 @@ COPY . /app
 # Instalamos las dependencias de Composer
 RUN composer install --no-scripts --no-autoloader
 
-RUN apk add --no-cache php8.2-pcntl
+RUN apk add --no-cache php8.2-pcntl-dev
+
 
 
 # Instalamos el paquete JWTAuth
