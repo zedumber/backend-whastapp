@@ -29,6 +29,11 @@ RUN php artisan jwt:secret
 
 # Instalamos Octane y RoadRunner
 RUN composer require laravel/octane spiral/roadrunner --with-all-dependencies
+# Instalamos los paquetes requeridos por Octane y RoadRunner
+RUN composer clear-cache
+RUN composer install --no-scripts --no-autoloader
+
+RUN composer require laravel/octane:^1.0 spiral
 
 # Descarga manual del binario de RoadRunner para ARM
 RUN curl -L -o rr.tar.gz https://github.com/roadrunner-server/roadrunner/releases/download/v2024.1.1/roadrunner-2024.1.1-linux-arm64.tar.gz \
@@ -64,6 +69,13 @@ RUN php artisan config:cache
 
 # Exponemos el puerto 8001
 EXPOSE 8001
+
+# Publicar la configuración de CORS
+RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
+# Limpiar la cache de la aplicación
+RUN php artisan cache:clear
+RUN php artisan view:clear
+RUN php artisan config:clear
 
 # Configuramos supervisord para administrar RoadRunner
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
