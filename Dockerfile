@@ -1,20 +1,24 @@
 # Usamos una imagen oficial de PHP compatible con ARM
 FROM php:8.2-fpm-alpine
 
-# Instalamos dependencias necesarias, incluyendo supervisord
-RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip supervisor openssl
+# Instalamos dependencias necesarias, incluyendo supervisord y sockets
+RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip supervisor openssl \
+    && docker-php-ext-install pdo pdo_mysql gd sockets
 
 # Establecemos el directorio de trabajo
-WORKDIR /app
+WORKDIR /var/www/html
 
 # Instalamos Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Copiamos los archivos de la aplicación
-COPY . /app
+COPY . .
 
 # Instalamos las dependencias de Composer
 RUN composer install --optimize-autoloader --no-dev
+
+# Cambiamos los permisos para que el servidor pueda escribir en el almacenamiento
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Instalamos el paquete JWTAuth
 RUN composer require tymon/jwt-auth
@@ -25,66 +29,17 @@ RUN php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServic
 # Generamos la clave JWT
 RUN php artisan jwt:secret
 
-# Instalar dependencias necesarias
-RUN apk update && apk add --no-cache \
-    linux-headers \
-    libevent-dev \
-    libssl-dev \
-    libcurl4-openssl-dev \
-    pkg-config
+# Publicamos la configuración de CORS
+RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
 
-    # Instalar sockets
-RUN docker-php-ext-install sockets
-
-
-# Instalamos Octane y RoadRunner
-RUN composer require laravel/octane:^1.0 spiral/roadrunner --with-all-dependencies
-RUN composer clear-cache
-RUN composer install --no-scripts --no-autoloader
-#RUN composer require laravel/octane:^1.0 spiral
-
-# Descarga manual del binario de RoadRunner para ARM
-RUN curl -L -o rr.tar.gz https://github.com/roadrunner-server/roadrunner/releases/download/v2024.1.1/roadrunner-2024.1.1-linux-arm64.tar.gz \
-    && tar -xvzf rr.tar.gz \
-    && mv roadrunner-2024.1.1-linux-arm64/rr /app/vendor/bin/rr \
-    && chmod +x /app/vendor/bin/rr \
-    && rm -rf roadrunner-2024.1.1-linux-arm64 rr.tar.gz
-
-# Copiamos el archivo .env
-COPY .env.example .env
-
-# Creamos el directorio para los logs
-RUN mkdir -p /app/storage/logs
-
-# Limpiamos la cache de la aplicación
-RUN php artisan cache:clear
-RUN php artisan view:clear
-RUN php artisan config:clear
-
-# Copiamos el script de entrada
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Configuramos el servidor manualmente
-RUN echo "OCTANE_SERVER=roadrunner" >> .env
-
-# Cacheamos la configuración
-RUN php artisan config:cache
+# Limpiamos y cacheamos la configuración de la aplicación
+RUN php artisan cache:clear && php artisan view:clear && php artisan config:cache
 
 # Exponemos el puerto 8001
 EXPOSE 8001
 
-# Publicar la configuración de CORS
-RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
-RUN php artisan cache:clear
-RUN php artisan view:clear
-RUN php artisan config:clear
-
-# Configuramos supervisord para administrar RoadRunner
+# Copiamos la configuración de supervisord
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Cambiamos el entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
-
-# Comando por defecto
+# Comando por defecto para iniciar supervisord
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
