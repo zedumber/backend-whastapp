@@ -4,6 +4,13 @@ FROM php:8.2-fpm-bullseye
 # Establecemos el directorio de trabajo
 WORKDIR /app
 
+# Instalamos git y otras dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    && docker-php-ext-install zip
+
 # Instalamos Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -23,7 +30,6 @@ RUN composer clear-cache
 RUN composer install --no-scripts --no-autoloader
 
 RUN composer require laravel/octane:^1.0 spiral/roadrunner:^2.4 --with-all-dependencies
-
 
 # Instalamos el paquete JWTAuth
 RUN composer require tymon/jwt-auth
@@ -56,8 +62,6 @@ RUN php artisan jwt:secret
 
 # Instalamos e iniciamos Octane con el servidor Swoole
 RUN php artisan octane:install --server="swoole"
-
-#CMD php artisan octane:start --server="swoole" --host="0.0.0.0"
 
 # Copiamos el archivo de configuración de supervisord
 COPY supervisord.conf /etc/supervisord.conf
