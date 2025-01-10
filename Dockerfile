@@ -65,14 +65,11 @@ COPY supervisord.conf /etc/supervisord.conf
 # Exponemos el puerto 8000
 EXPOSE 8010
 
-# Instalamos supervisord y cron
-RUN apk update && apk add supervisor && apk add openrc && apk add --no-cache bash
-
-# Configuramos el crontab
-COPY crontab /etc/crontabs/root
+# Instalamos supervisord
+RUN apt-get update && apt-get install -y supervisor bash
 
 # Copiamos el archivo de configuración de supervisord
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Configuramos el CMD para iniciar supervisord y cron
-CMD ["/bin/sh", "-c", "crond && /usr/bin/supervisord -c /etc/supervisord.conf"]
+# Configuramos el CMD para iniciar supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
