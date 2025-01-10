@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
     && echo "xdebug.idekey=VSCODE" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini 
 
     # Instala Swoole
-RUN pecl install swoole \
+RUN apt-get  pecl install swoole \
 && docker-php-ext-enable swoole
    
 
