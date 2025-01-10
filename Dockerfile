@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql gd sockets
 
 # Instalamos dependencias necesarias
-RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip openssl \
+RUN apt-get add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip openssl \
     && docker-php-ext-install pdo pdo_mysql gd sockets
 
 # Establecemos el directorio de trabajo
