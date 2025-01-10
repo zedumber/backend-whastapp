@@ -6,6 +6,11 @@ FROM php:8.2-fpm-alpine
 # Instalamos dependencias necesarias, incluyendo supervisord
 RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip supervisor
 
+# Instalamos Swoole
+RUN apk add --no-cache openswoole-dev
+RUN pecl install openswoole
+RUN docker-php-ext-enable swoole
+
 # Establecemos el directorio de trabajo
 WORKDIR /app
 
@@ -17,10 +22,6 @@ COPY . /app
 
 # Instalamos las dependencias de Composer
 RUN composer install --no-scripts --no-autoloader
-
-RUN apk add --no-cache php8.2-pcntl-dev
-
-
 
 # Instalamos el paquete JWTAuth
 RUN composer require tymon/jwt-auth
