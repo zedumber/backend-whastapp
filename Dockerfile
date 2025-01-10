@@ -1,5 +1,11 @@
 # Usamos una imagen oficial de PHP compatible con ARM
-FROM php:8.2-fpm-alpine
+FROM php:8.2-fpm-bullseye
+
+# Instalamos dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    bash curl git libpng-dev libjpeg62-turbo-dev libfreetype6-dev zip libssl-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql gd sockets
 
 # Instalamos dependencias necesarias
 RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip openssl \
