@@ -15,6 +15,7 @@ COPY . /app
 
 # Instalamos las dependencias de Composer
 RUN composer install --optimize-autoloader --no-dev
+#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 
 # Instalamos el paquete JWTAuth
@@ -29,9 +30,12 @@ RUN php artisan jwt:secret
 # Instalamos Octane y RoadRunner
 RUN composer require laravel/octane spiral/roadrunner --with-all-dependencies
 
-# Verificamos que el binario de RR existe y lo descargamos
-RUN if [ -f vendor/bin/rr ]; then vendor/bin/rr get; else echo "RoadRunner binario no encontrado"; fi
-
+# Descarga manual del binario de RoadRunner para ARM
+RUN curl -L -o rr.tar.gz https://github.com/roadrunner-server/roadrunner/releases/download/v2024.1.1/roadrunner-2024.1.1-linux-arm64.tar.gz \
+    && tar -xvzf rr.tar.gz \
+    && mv roadrunner-2024.1.1-linux-arm64/rr /app/vendor/bin/rr \
+    && chmod +x /app/vendor/bin/rr \
+    && rm -rf roadrunner-2024.1.1-linux-arm64 rr.tar.gz
 
 # Copiamos el archivo .env
 COPY .env.example .env
