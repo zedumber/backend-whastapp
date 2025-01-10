@@ -15,8 +15,6 @@ COPY . /app
 
 # Instalamos las dependencias de Composer
 RUN composer install --optimize-autoloader --no-dev
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 
 # Instalamos el paquete JWTAuth
 RUN composer require tymon/jwt-auth
@@ -29,10 +27,8 @@ RUN php artisan jwt:secret
 
 # Instalamos Octane y RoadRunner
 RUN composer require laravel/octane spiral/roadrunner --with-all-dependencies
-# Instalamos los paquetes requeridos por Octane y RoadRunner
 RUN composer clear-cache
 RUN composer install --no-scripts --no-autoloader
-
 RUN composer require laravel/octane:^1.0 spiral
 
 # Descarga manual del binario de RoadRunner para ARM
@@ -53,13 +49,9 @@ RUN php artisan cache:clear
 RUN php artisan view:clear
 RUN php artisan config:clear
 
-
 # Copiamos el script de entrada
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# Creamos el archivo .rr.yaml en la raíz del proyecto
-#RUN echo "http:\n  address: 0.0.0.0:8001" > /app/.rr.yaml
 
 # Configuramos el servidor manualmente
 RUN echo "OCTANE_SERVER=roadrunner" >> .env
@@ -72,13 +64,13 @@ EXPOSE 8001
 
 # Publicar la configuración de CORS
 RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
-# Limpiar la cache de la aplicación
 RUN php artisan cache:clear
 RUN php artisan view:clear
 RUN php artisan config:clear
 
 # Configuramos supervisord para administrar RoadRunner
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Cambiamos el entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
