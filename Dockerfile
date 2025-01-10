@@ -1,8 +1,9 @@
 # Usamos una imagen oficial de PHP compatible con ARM
 FROM php:8.1-fpm-alpine
 
+
 # Instalamos dependencias necesarias
-RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev libfreetype6-dev zip
+RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip
 
 # Establecemos el directorio de trabajo
 WORKDIR /app
