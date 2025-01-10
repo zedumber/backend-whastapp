@@ -1,42 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
-    build:
-      context: .
-    container_name: php-fpm
-    volumes:
-      - .:/var/www/html
+    image: backned-whastapp
+    build: .
     ports:
-      - "8001:8001" # Cambiado a 9000, que es el puerto estándar para PHP-FPM
-    networks:
-      - app-network
-
-  webserver:
-    image: nginx:stable
-    container_name: nginx
+      - "8001:8001"
     volumes:
-      - .:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/app
+    command: php artisan octane:start --server=roadrunner --host=0.0.0.0 --port=8001
+    environment:
+      - APP_ENV=local
+      - XDEBUG_MODE=debug
+      - XDEBUG_CLIENT_HOST=host.docker.internal
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
     ports:
-      - "80:80"
-    depends_on:
-      - app
-    networks:
-      - app-network
-
-  worker:
-    build:
-      context: .
-    container_name: laravel-worker
-    command: php artisan queue:work --tries=3
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      - app
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - "6379:6379"
