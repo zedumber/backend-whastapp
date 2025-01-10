@@ -2,8 +2,9 @@
 FROM php:8.2-fpm-alpine
 
 
-# Instalamos dependencias necesarias
-RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip
+
+# Instalamos dependencias necesarias, incluyendo supervisord
+RUN apk add --no-cache bash curl git libpng-dev libjpeg-turbo-dev freetype-dev zip supervisor
 
 # Establecemos el directorio de trabajo
 WORKDIR /app
