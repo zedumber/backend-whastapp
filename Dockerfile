@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libpcre3-dev \
     unzip \
     libzip-dev \
+    && pecl install swoole \
     && docker-php-ext-install sockets zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && pecl install xdebug \
@@ -21,9 +22,7 @@ RUN apt-get update && apt-get install -y \
     && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.idekey=VSCODE" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini 
 
-    # Instala Swoole
-RUN apt-get  pecl install swoole \
-&& docker-php-ext-enable swoole
+
    
 
 # Instalamos Composer
