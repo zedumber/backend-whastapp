@@ -61,7 +61,7 @@ RUN mkdir -p /app/storage/logs
 #RUN composer require fruitcake/laravel-cors:^2.2 --with-all-dependencies
 
 # Publicar la configuración de CORS
-RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
+#RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
 
 # Limpiar la cache de la aplicación
 RUN php artisan cache:clear
