@@ -7,7 +7,8 @@ WORKDIR /app
 # Instalamos dependencias necesarias
 RUN apt-get update && apt-get install -y \
     git unzip libzip-dev nano bash \
-    && docker-php-ext-install zip sockets pdo pdo_mysql
+    && docker-php-ext-install zip sockets pdo 
+    RUN docker-php-ext-install pcntl
 
 # Instalamos Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -21,6 +22,8 @@ RUN composer install --no-dev --optimize-autoloader
     # Instalamos Laravel Octane sin dependencias de desarrollo
 RUN composer require laravel/octane \
 && php artisan octane:install --server=swoole
+
+
 
 
 # Exponemos el puerto 8000
