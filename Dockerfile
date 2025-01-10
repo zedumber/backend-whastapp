@@ -18,6 +18,9 @@ COPY . /app
 # Instalamos las dependencias de Composer
 RUN composer install --no-scripts --no-autoloader
 
+RUN apk add --no-cache php8.2-pcntl
+
+
 # Instalamos el paquete JWTAuth
 RUN composer require tymon/jwt-auth
 
