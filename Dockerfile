@@ -25,6 +25,18 @@ RUN php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServic
 # Generamos la clave JWT
 RUN php artisan jwt:secret
 
+# Instalar dependencias necesarias
+RUN apk update && apk add --no-cache \
+    linux-headers \
+    libevent-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    pkg-config
+
+    # Instalar sockets
+RUN docker-php-ext-install sockets
+
+
 # Instalamos Octane y RoadRunner
 RUN composer require laravel/octane:^1.0 spiral/roadrunner --with-all-dependencies
 RUN composer clear-cache
