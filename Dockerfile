@@ -18,9 +18,10 @@ COPY . .
 # Instalamos las dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Instalamos Laravel Octane
-RUN composer require laravel/octane --no-dev \
-    && php artisan octane:install --server=swoole
+    # Instalamos Laravel Octane sin dependencias de desarrollo
+RUN composer require laravel/octane \
+&& php artisan octane:install --server=swoole
+
 
 # Exponemos el puerto 8000
 EXPOSE 8000
