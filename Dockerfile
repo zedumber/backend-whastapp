@@ -39,7 +39,7 @@ RUN php artisan cache:clear && php artisan view:clear && php artisan config:cach
 EXPOSE 8001
 
 # Copiamos la configuración de supervisord
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+#COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Comando por defecto para iniciar supervisord
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+#CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
