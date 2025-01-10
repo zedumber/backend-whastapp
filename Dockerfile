@@ -28,6 +28,9 @@ RUN php artisan jwt:secret
 # Instalamos Octane y RoadRunner
 RUN composer require laravel/octane spiral/roadrunner --with-all-dependencies
 
+# Descargamos el binario de RoadRunner
+RUN vendor/bin/rr get
+
 # Copiamos el archivo .env
 COPY .env.example .env
 
@@ -39,8 +42,14 @@ RUN php artisan cache:clear
 RUN php artisan view:clear
 RUN php artisan config:clear
 
-# Instalamos e iniciamos Octane con RoadRunner
-#RUN php artisan octane:install --server="roadrunner"
+# Creamos el archivo .rr.yaml en la raíz del proyecto
+#RUN echo "http:\n  address: 0.0.0.0:8001" > /app/.rr.yaml
+
+# Configuramos el servidor manualmente
+RUN echo "OCTANE_SERVER=roadrunner" >> .env
+
+# Cacheamos la configuración
+RUN php artisan config:cache
 
 # Exponemos el puerto 8001
 EXPOSE 8001
@@ -50,8 +59,3 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Comando por defecto
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
-
-# Creamos el archivo .rr.yaml en la raíz del proyecto
-RUN echo "http:\n  address: 0.0.0.0:8001" > /app/.rr.yaml
-
