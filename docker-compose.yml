@@ -1,15 +1,23 @@
 version: "3.8"
 
 services:
-  app:
+  apiwhastapp:  # Cambié el nombre del servicio a 'apiwhastapp'
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8001:8000"
+      - "8001:8000"  # Expones el puerto 8001 a la máquina host
     volumes:
       - .:/app
     environment:
       APP_ENV: production
       APP_DEBUG: false
       APP_KEY: base64:YourAppKeyHere
+
+  frontend:
+    image: zedumber1/whastapp-frontend
+    container_name: frontend-whastapp
+    ports:
+      - "3010:3010"
+    environment:
+      BACKEND_URL: "http://apiwhastapp:8000"  # Usamos el nombre del servicio 'apiwhastapp' para conectar con el backend
