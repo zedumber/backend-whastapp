@@ -40,7 +40,7 @@ RUN php artisan view:clear
 RUN php artisan config:clear
 
 # Instalamos e iniciamos Octane con RoadRunner
-RUN php artisan octane:install --server="roadrunner"
+#RUN php artisan octane:install --server="roadrunner"
 
 # Exponemos el puerto 8001
 EXPOSE 8001
