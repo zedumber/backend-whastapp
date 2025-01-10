@@ -58,9 +58,7 @@ COPY .env.example .env
 RUN mkdir -p /app/storage/logs
 
 # Instalar dependencias de Composer
-RUN composer require fruitcake/laravel-cors:^2.2 --with-all-dependencies
-
-
+#RUN composer require fruitcake/laravel-cors:^2.2 --with-all-dependencies
 
 # Publicar la configuración de CORS
 RUN php artisan vendor:publish --provider="Fruitcake\Cors\CorsServiceProvider"
