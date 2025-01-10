@@ -20,11 +20,7 @@ RUN apt-get update && apt-get install -y \
     && echo "xdebug.idekey=VSCODE" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 
-    RUN curl -L -o rr.tar.gz https://github.com/roadrunner-server/roadrunner/releases/download/v2024.1.1/roadrunner-2024.1.1-linux-arm64.tar.gz \
-    && tar -xvzf rr.tar.gz \
-    && mv roadrunner-2024.1.1-linux-arm64/rr /app/vendor/bin/rr \
-    && chmod +x /app/vendor/bin/rr \
-    && rm -rf roadrunner-2024.1.1-linux-arm64 rr.tar.gz
+  
     
 
 
@@ -98,12 +94,13 @@ RUN apt-get update && apt install -y procps
 # Copiamos el archivo de configuración de supervisord
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+
 # Crear el directorio antes de mover el archivo
-RUN mkdir -p /app/vendor/bin \
+RUN mkdir -p /var/www/html/vendor/bin/ \
     && curl -L -o rr.tar.gz https://github.com/roadrunner-server/roadrunner/releases/download/v2024.1.1/roadrunner-2024.1.1-linux-arm64.tar.gz \
     && tar -xvzf rr.tar.gz \
-    && mv roadrunner-2024.1.1-linux-arm64/rr /app/vendor/bin/rr \
-    && chmod +x /app/vendor/bin/rr \
+    && mv roadrunner-2024.1.1-linux-arm64/rr /var/www/html/vendor/bin/rr \
+    && chmod +x /var/www/html/vendor/bin/rr \
     && rm -rf roadrunner-2024.1.1-linux-arm64 rr.tar.gz
 
 
