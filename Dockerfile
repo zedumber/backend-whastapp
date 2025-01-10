@@ -14,7 +14,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . /app
 
 # Instalamos las dependencias de Composer
-RUN composer install --no-scripts --no-autoloader
+RUN composer install --optimize-autoloader --no-dev
+
 
 # Instalamos el paquete JWTAuth
 RUN composer require tymon/jwt-auth
@@ -28,8 +29,9 @@ RUN php artisan jwt:secret
 # Instalamos Octane y RoadRunner
 RUN composer require laravel/octane spiral/roadrunner --with-all-dependencies
 
-# Descargamos el binario de RoadRunner
-RUN vendor/bin/rr get
+# Verificamos que el binario de RR existe y lo descargamos
+RUN if [ -f vendor/bin/rr ]; then vendor/bin/rr get; else echo "RoadRunner binario no encontrado"; fi
+
 
 # Copiamos el archivo .env
 COPY .env.example .env
@@ -41,6 +43,11 @@ RUN mkdir -p /app/storage/logs
 RUN php artisan cache:clear
 RUN php artisan view:clear
 RUN php artisan config:clear
+
+
+# Copiamos el script de entrada
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Creamos el archivo .rr.yaml en la raíz del proyecto
 #RUN echo "http:\n  address: 0.0.0.0:8001" > /app/.rr.yaml
@@ -56,6 +63,8 @@ EXPOSE 8001
 
 # Configuramos supervisord para administrar RoadRunner
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Cambiamos el entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Comando por defecto
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
